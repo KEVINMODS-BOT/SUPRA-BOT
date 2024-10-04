@@ -13,7 +13,7 @@ let handler = async (m, { conn: star, command, args, text, usedPrefix }) => {
        txt += `	✩   *Publicado* : ${eYear(res[0].ago)}\n`
        txt += `	✩   *Canal* : ${res[0].author.name || 'Desconocido'}\n`
        txt += `	✩   *Url* : ${'https://youtu.be/' + res[0].videoId}\n\n`
-       txt += `> *-* Para descargar responde a este mensaje con *Video* o *Audio*.`
+       txt += `> *-* Para descargar primero usa el comando  .off document  luego responde a este mensaje con *Video* o *Audio*.`
 await star.sendFile(m.chat, img, 'thumbnail.jpg', txt, m, null, rcanal)
 await m.react('✅')
 } catch {
