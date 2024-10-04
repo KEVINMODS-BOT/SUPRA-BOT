@@ -33,7 +33,7 @@ global.packname = ``
 global.author = '{\n "bot": {\n   "name": "𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏",\n     "author": "Aldair",\n   "status_bot": "active"\n }\n}'
 global.wait = '🐢 *Aɢᴜᴀʀᴅᴇ ᴜɴ ᴍᴏᴍᴇɴᴛᴏ, sᴏʏ ʟᴇɴᴛᴀ... ฅ^•ﻌ•^ฅ*'
 global.botname = '𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏'
-global.textbot = `𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏
+global.textbot = `𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏`
 global.listo = '*Aqui tiene ฅ^•ﻌ•^ฅ*'
 global.namechannel = '𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏'
 
