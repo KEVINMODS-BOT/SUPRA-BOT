@@ -1,41 +1,59 @@
-//
 
-let handler = async (m, { conn, participants, groupMetadata }) => {
-    const pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || './src/avatar_contact.png'
-    const { isBanned, welcome, detect, sWelcome, sBye, sPromote, sDemote, antiLink, delete: del } = global.db.data.chats[m.chat]
-    const groupAdmins = participants.filter(p => p.admin)
-    const listAdmin = groupAdmins.map((v, i) => `${i + 1}. @${v.id.split('@')[0]}`).join('\n')
-    const owner = groupMetadata.owner || groupAdmins.find(p => p.admin === 'superadmin')?.id || m.chat.split`-`[0] + '@s.whatsapp.net'
-    let text = `
-╭─「 *INFO DE GRUPO* 」
-║❥ *ID:* ${groupMetadata.id}
-║❥ *Nombre:* ${groupMetadata.subject}
-║❥ *Miembros:* ${participants.length}
-║❥ *Dueño de Grupo:* @${owner.split('@')[0]}
-║❥ *Admins:* 
-${listAdmin}
-║❥ *Configuración de grupo:*
-║❥ • ${isBanned ? '✅' : '❎'} Baneado
-║❥ • ${welcome ? '✅' : '❎'} Bienvenida
-║❥ • ${detect ? '✅' : '❎'} Detector
-║❥ • ${del ? '❎' : '✅'} Anti Delete
-║❥ • ${antiLink ? '✅' : '❎'} Anti Link WhatsApp
-╰────
-*Configuración de mensajes:*
-• Bienvenida: ${sWelcome}
-• Despedida: ${sBye}
-• Promovidos: ${sPromote}
-• Degradados: ${sDemote}
+let handler = async (m, { conn }) => {
+    // Obtener metadata del grupo
+    let chat = await conn.groupMetadata(m.chat);
+    let groupName = chat.subject;
+    let groupDesc = chat.desc;
+    let participants = chat.participants.length;
+    let owner = chat.owner ? '@' + chat.owner.split('@')[0] : 'Desconocido';
+    let groupCreation = new Date(chat.creation * 1000).toLocaleString("es-ES", { timeZone: "UTC", hour12: false }); // Fecha de creación
 
-*Descripción* :
-• ${groupMetadata.desc?.toString() || 'desconocido'}
-`.trim()
-    conn.sendFile(m.chat, pp, 'pp.jpg', text, m, false, { mentions: [...groupAdmins.map(v => v.id), owner] })
-}
+    // Verificar si el bot es administrador
+    let botIsAdmin = chat.participants.find(p => p.id === conn.user.jid)?.admin;
+    let groupInviteCode;
+    let groupLink;
 
-handler.help = ['infogp']
-handler.tags = ['group']
-handler.command = ['infogrupo', 'groupinfo', 'infogp'] 
-handler.group = true
+    if (botIsAdmin) {
+        // Obtener el enlace del grupo si el bot es admin
+        groupInviteCode = await conn.groupInviteCode(m.chat);
+        groupLink = `https://chat.whatsapp.com/${groupInviteCode}`;
+    } else {
+        groupLink = 'El bot no es administrador';
+    }
 
-export default handler
+    // Obtener la imagen del grupo
+    let groupPic;
+    try {
+        groupPic = await conn.profilePictureUrl(m.chat, 'image');
+    } catch (e) {
+        groupPic = 'https://qu.ax/LXzyv.jpg'; // URL de la imagen de respaldo
+    }
+
+    // Información del grupo
+    let info = `
+*🔹 Información del Grupo 🔹*
+
+➤ *Nombre del Grupo:* ${groupName}
+
+➤ *Descripción:* ${groupDesc || 'Sin descripción'}
+
+➤ *Número de Participantes:* ${participants}
+
+➤ *Creador del Grupo:* ${owner}
+
+➤ *Fecha de Creación:* ${groupCreation}
+
+➤ *Enlace del Grupo:* ${groupLink}
+    `;
+
+    // Enviar el mensaje con la imagen del grupo o la imagen de respaldo
+    conn.sendFile(m.chat, groupPic, 'group.jpg', info, m, { mentions: [chat.owner] });
+};
+
+handler.help = ['infogrupo'];
+handler.tags = ['group'];
+handler.command = /^infogrupo$/i;
+handler.group = true; // Solo funcionará en grupos
+handler.admin = false; // No requiere ser admin
+
+export default handler;
