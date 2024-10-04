@@ -13,7 +13,7 @@ export async function before(m, {conn, participants, groupMetadata}) {
   let limit = user.limit || 0; // Asigna la cantidad de créditos como "limit"
 
   if (chat.welcome && m.messageStubType == 27) { // Cuando un usuario entra
-    let wel = *BIENVENIDO @${m.messageStubParameters[0].split@[0]} AL GRUPO ${groupMetadata.subject}*\n\n*TU INFORMACIÓN*\n➢ Registrado: ${registered}\n➢ Créditos: ${limit};
+    let wel =  `*BIENVENIDO @${m.messageStubParameters[0].split@[0]} AL GRUPO ${groupMetadata.subject}*\n\n*TU INFORMACIÓN*\n➢ Registrado: ${registered}\n➢ Créditos: ${limit}`;
     await conn.sendMini(m.chat, packname, dev, wel, img, img, channel, fkontak);
   }
 
@@ -23,7 +23,7 @@ export async function before(m, {conn, participants, groupMetadata}) {
   }
 
   if (chat.welcome && m.messageStubType == 32) { // Cuando un usuario es expulsado
-    let kick = *@${m.messageStubParameters[0].split@[0]} FUE EXPULSADO DEL GRUPO 👁‍🗨*;
+    let kick =  `*@${m.messageStubParameters[0].split@[0]} FUE EXPULSADO DEL GRUPO 👁‍🗨*`;
     await conn.sendMini(m.chat, packname, dev, kick, img2, img2, channel, fkontak);
   }
 }
