@@ -9,16 +9,16 @@ import axios from 'axios'
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
 global.owner = [
-  ['5218261000681', 'おDanịel.xyz⁩', true],
-  ['5491168239750', 'Samu', true],
-  ['51910108980'],
-  ['5212751090007'],
-  ['5218132588591'],
-  ['5217341430079'],
-  ['5218261009198'],
-  ['5218139760662'],
-  ['5218261275256'],
-  ['5215659171599']
+  ['51925015528', 'Aldair⁩', true],
+  ['5493624187763', 'Kevin', true],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528'],
+  ['51925015528']
 
 ]
 
@@ -30,12 +30,12 @@ global.prems = []
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
 global.packname = ``
-global.author = '{\n "bot": {\n   "name": "Ai Hoshino",\n     "author": "おDanịel.xyz⁩",\n   "status_bot": "active"\n }\n}'
+global.author = '{\n "bot": {\n   "name": "𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏",\n     "author": "Aldair",\n   "status_bot": "active"\n }\n}'
 global.wait = '🐢 *Aɢᴜᴀʀᴅᴇ ᴜɴ ᴍᴏᴍᴇɴᴛᴏ, sᴏʏ ʟᴇɴᴛᴀ... ฅ^•ﻌ•^ฅ*'
-global.botname = '✯ Ai Hoshino - MD ✰'
-global.textbot = `Powered By Starlights Team`
+global.botname = '𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏'
+global.textbot = `𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏
 global.listo = '*Aqui tiene ฅ^•ﻌ•^ฅ*'
-global.namechannel = '【 ✯ Starlights Team - Oficial Chanel ✰ 】'
+global.namechannel = '𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏'
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
@@ -44,8 +44,8 @@ global.miniurl = fs.readFileSync('./storage/img/miniurl.jpg')
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-global.group = 'https://chat.whatsapp.com/IozDcUnkCoVDBQBDNYF6GB'
-global.canal = 'https://whatsapp.com/channel/0029VaBfsIwGk1FyaqFcK91S'
+global.group = 'https://chat.whatsapp.com/Eij6yev1O5vIUisQhbfbSw'
+global.canal = 'https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42'
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
