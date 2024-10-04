@@ -13,9 +13,9 @@ const message = Array.from(uniqueUsers.values()).map((user, index) => `┌  ✩ 
   
 const replyMessage = message.length === 0 ? "" : message
 const totalUsers = uniqueUsers.size;
-const responseMessage = `${` –  *S E R B O T  -  S U B B O T S*\n\n${replyMessage.trim()}`.trim()}`
+const responseMessage = `${`   *S U B B O T S  -  A C T I V O S*\n\n${replyMessage.trim()}`.trim()}`
   
-let img = await (await fetch(`https://i.ibb.co/1dW0kGf/file.jpg`)).buffer()
+let img = await (await fetch(`https://qu.ax/btVer.jpg`)).buffer()
 
 await _envio.sendFile(m.chat, img, 'thumbnail.jpg', responseMessage, m, false, { mentions: _envio.parseMention(responseMessage) })
 }
