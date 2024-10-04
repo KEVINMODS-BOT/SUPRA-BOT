@@ -1,80 +1,64 @@
-let cooldowns = {}
 
-let handler = async (m, { conn, text, command, usedPrefix }) => {
-  let users = global.db.data.users
-  let senderId = m.sender
-  let senderName = conn.getName(senderId)
-  
-  let tiempoEspera = 5 * 60
-  if (cooldowns[m.sender] && Date.now() - cooldowns[m.sender] < tiempoEspera * 1000) {
-    let tiempoRestante = segundosAHMS(Math.ceil((cooldowns[m.sender] + tiempoEspera * 1000 - Date.now()) / 1000))
-    m.reply(`🚩 Ya has cometido un Crimen recientemente, espera *⏱ ${tiempoRestante}* para cometer tu próximo Crimen y evitar ser atrapado.`)
-    return
-  }
-  
-  cooldowns[m.sender] = Date.now()
-  
-  let senderLimit = users[senderId].limit || 0
+let minRob = 15  // Cantidad mínima de créditos que se puede robar
+let maxRob = 30  // Cantidad máxima de créditos que se puede robar
+let cooldown = 1200000  // 20 minutos en milisegundos
 
-  let randomUserId = Object.keys(users)[Math.floor(Math.random() * Object.keys(users).length)]
+let handler = async (m, { conn, usedPrefix, command }) => {
+    let userData = global.db.data.users[m.sender]
+    let now = Date.now()
+    let time = userData.lastrob + cooldown
 
-  while (randomUserId === senderId) {
-    randomUserId = Object.keys(users)[Math.floor(Math.random() * Object.keys(users).length)]
-  }
+    if (now - userData.lastrob < cooldown) {
+        throw `*⏱️ ¡Espera ${msToTime(time - now)} para volver a robar!*`
+    }
 
-  let randomUserLimit = users[randomUserId].limit || 0
+    let who
+    if (m.isGroup) 
+        who = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : false
+    else 
+        who = m.chat
 
-  let minAmount = 15
-  let maxAmount = 50
+    if (!who) 
+        throw `𝙀𝙏𝙄𝙌𝙐𝙀𝙏𝘼 𝘼 𝘼𝙇𝙂𝙐𝙄𝙀𝙉 𝙋𝘼𝙍𝘼 𝙍𝙊𝘽𝘼𝙍`
 
-  let amountTaken = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount
+    if (!(who in global.db.data.users)) 
+        throw `𝙀𝙇 𝙐𝙎𝙐𝘼𝙍𝙄𝙊 𝙉𝙊 𝙎𝙀 𝙀𝙉𝘾𝙐𝙀𝙉𝙏𝙍𝘼 𝙀𝙉 𝙈𝙄 𝘽𝘼𝙎𝙀 𝘿𝙀 𝘿𝘼𝙏𝙊𝙎.`
 
-  let randomOption = Math.floor(Math.random() * 3)
+    let targetUserData = global.db.data.users[who]
+    let robAmount = Math.floor(Math.random() * (maxRob - minRob + 1)) + minRob
 
-  switch (randomOption) {
-  case 0:
-  users[senderId].limit += amountTaken
-  users[randomUserId].limit -= amountTaken
-  conn.sendMessage(m.chat, {
-        text: `🚩¡Lograste cometer tu crimen con exito!, acabas de robar *${amountTaken} ⭐ Estrellas* a @${randomUserId.split("@")[0]}\n\nSe suman *+${amountTaken} ⭐ Estrellas* a ${senderName}.`,
-  contextInfo: { 
-  mentionedJid: [randomUserId],
-  }
-  }, { quoted: m })
-  break
+    // Verificar si el usuario objetivo tiene suficientes créditos fuera del banco
+    let availableCredits = targetUserData.limit
+    if (availableCredits < robAmount) 
+        return m.reply(`😿 @${who.split`@`[0]} tiene menos de *${robAmount} Créditos*. No robes a un pobre :v`, null, { mentions: [who] })
 
-  case 1:
-  let amountSubtracted = Math.min(Math.floor(Math.random() * (senderLimit - minAmount + 1)) + minAmount, maxAmount)
-  users[senderId].limit -= amountSubtracted
-  conn.reply(m.chat, `🚩 No fuiste cuidadoso y te atraparon mientras cometias tu cirme, se restaron *-${amountSubtracted} ⭐ Estrellas* a ${senderName}.`, m)
-  break
+    // Transferir créditos
+    userData.limit += robAmount
+    targetUserData.limit -= robAmount
 
-  case 2:
-  let smallAmountTaken = Math.min(Math.floor(Math.random() * (randomUserLimit / 2 - minAmount + 1)) + minAmount, maxAmount)
-  users[senderId].limit += smallAmountTaken
-  users[randomUserId].limit -= smallAmountTaken
-  conn.sendMessage(m.chat, {
-  text: `🚩 Lograste cometer tu crimen con exito, pero te descubrieron y solo lograste tomar *${smallAmountTaken} ⭐ Estrellas* de @${randomUserId.split("@")[0]}\n\nSe suman *+${smallAmountTaken} ⭐ Estrellas* a ${senderName}.`,
-  contextInfo: { 
-  mentionedJid: [randomUserId],
-  }
-  }, { quoted: m })
-  break
-  }
-  
-  global.db.write()
+    // Asegurarse de que las modificaciones se guarden en la base de datos
+    global.db.write()
+
+    // Enviar mensaje de éxito
+    m.reply(`*✧ Robaste ${robAmount} Créditos a @${who.split`@`[0]}*`, null, { mentions: [who] })
+    userData.lastrob = now
 }
-handler.tags = ['rpg']
-handler.help = ['crimen']
-handler.command = ['crimen', 'crime']
-handler.register = true
+
+handler.help = ['robar', 'rob']
+handler.tags = ['econ']
+handler.command = ['robar', 'rob']
 handler.group = true
+handler.register = true
 
-export default handler
+export default handler  
 
-function segundosAHMS(segundos) {
-  let horas = Math.floor(segundos / 3600)
-  let minutos = Math.floor((segundos % 3600) / 60)
-  let segundosRestantes = segundos % 60
-  return `${minutos} minutos y ${segundosRestantes} segundos`
+function msToTime(duration) {
+    var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = Math.floor((duration / 1000) % 60),
+    minutes = Math.floor((duration / (1000 * 60)) % 60),
+    hours = Math.floor((duration / (1000 * 60 * 60)) % 24)
+    hours = (hours < 10) ? "0" + hours : hours
+    minutes = (minutes < 10) ? "0" + minutes : minutes
+    seconds = (seconds < 10) ? "0" + seconds : seconds
+    return hours + " Hora(s) " + minutes + " Minuto(s)"
 }
