@@ -1,4 +1,3 @@
-
 let handler = async (m, { conn }) => {
     // Obtener metadata del grupo
     let chat = await conn.groupMetadata(m.chat);
@@ -29,6 +28,10 @@ let handler = async (m, { conn }) => {
         groupPic = 'https://qu.ax/LXzyv.jpg'; // URL de la imagen de respaldo
     }
 
+    // Obtener la lista de administradores
+    let admins = chat.participants.filter(p => p.admin).map(p => '@' + p.id.split('@')[0]);
+    let adminList = admins.length > 0 ? admins.join('\n') : 'Sin administradores';
+
     // Información del grupo
     let info = `
 *🔹 Información del Grupo 🔹*
@@ -41,13 +44,16 @@ let handler = async (m, { conn }) => {
 
 ➤ *Creador del Grupo:* ${owner}
 
+➤ *Administradores del Grupo:* 
+${adminList}
+
 ➤ *Fecha de Creación:* ${groupCreation}
 
 ➤ *Enlace del Grupo:* ${groupLink}
     `;
 
     // Enviar el mensaje con la imagen del grupo o la imagen de respaldo
-    conn.sendFile(m.chat, groupPic, 'group.jpg', info, m, { mentions: [chat.owner] });
+    conn.sendFile(m.chat, groupPic, 'group.jpg', info, m, { mentions: [chat.owner, ...admins] });
 };
 
 handler.help = ['infogrupo'];
