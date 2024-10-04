@@ -1,8 +1,8 @@
 let cooldowns = {}
 
 let handler = async (m, { conn }) => {
-
-  let hasil = Math.floor(Math.random() * 5000)
+  // Generar una cantidad aleatoria de créditos (entre 10 y 30)
+  let hasil = Math.floor(Math.random() * 21) + 10
   let name = conn.getName(m.sender)
   
   let tiempoEspera = 5 * 60
@@ -11,14 +11,17 @@ let handler = async (m, { conn }) => {
     conn.reply(m.chat, `🚩 Hola ${name}, Ya has minado recientemente, espera ⏱ *${tiempoRestante}* para regresar a la Mina.`, m, rcanal)
     return
   }
+
+  // Incrementar los créditos del usuario
+  global.db.data.users[m.sender].limit += hasil
+  let txt = `🚩 Genial! minaste *${hasil} 💵 créditos.*`
   
-  global.db.data.users[m.sender].exp += hasil
-  let txt = `🚩 Genial! minaste *${hasil} 💫 XP.*`
   await m.react('⛏')
   await conn.reply(m.chat, txt, m, rcanal)
   
   cooldowns[m.sender] = Date.now()
 }
+
 handler.help = ['minar']
 handler.tags = ['rpg']
 handler.command = ['minar', 'miming', 'mine'] 
