@@ -1,10 +1,9 @@
-
 let handler = async (m, { conn, participants }) => {
   let text = '🚩 *Invocando a todos los miembros del grupo* 🚩\n\n'
   
-  // Recorrer la lista de participantes y agregar etiquetas
+  // Recorrer la lista de participantes y agregar etiquetas, cada una en una nueva línea
   for (let member of participants) {
-    text += `@${member.id.split('@')[0]} `
+    text += `@${member.id.split('@')[0]}\n`
   }
 
   // Enviar el mensaje con la mención a todos
