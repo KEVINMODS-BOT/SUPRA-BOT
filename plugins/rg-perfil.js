@@ -1,66 +1,132 @@
+import { createHash } from 'crypto';
+import PhoneNumber from 'awesome-phonenumber';
+import fetch from 'node-fetch';
 
-import { canLevelUp, xpRange } from '../lib/levelling.js'
-import { createHash } from 'crypto'
-import PhoneNumber from 'awesome-phonenumber'
-import fetch from 'node-fetch'
-import fs from 'fs'
+// Mapa de prefijos de países de Latinoamérica con nombres y banderas
+const countryPrefixes = {
+    "54": { name: "Argentina", flag: "🇦🇷" },
+    "591": { name: "Bolivia", flag: "🇧🇴" },
+    "55": { name: "Brasil", flag: "🇧🇷" },
+    "56": { name: "Chile", flag: "🇨🇱" },
+    "57": { name: "Colombia", flag: "🇨🇴" },
+    "506": { name: "Costa Rica", flag: "🇨🇷" },
+    "53": { name: "Cuba", flag: "🇨🇺" },
+    "593": { name: "Ecuador", flag: "🇪🇨" },
+    "503": { name: "El Salvador", flag: "🇸🇻" },
+    "502": { name: "Guatemala", flag: "🇬🇹" },
+    "509": { name: "Haití", flag: "🇭🇹" },
+    "504": { name: "Honduras", flag: "🇭🇳" },
+    "52": { name: "México", flag: "🇲🇽" },
+    "505": { name: "Nicaragua", flag: "🇳🇮" },
+    "507": { name: "Panamá", flag: "🇵🇦" },
+    "595": { name: "Paraguay", flag: "🇵🇾" },
+    "51": { name: "Perú", flag: "🇵🇪" },
+    "1": { name: "República Dominicana", flag: "🇩🇴" }, // República Dominicana comparte el prefijo con EE.UU y Canadá
+    "598": { name: "Uruguay", flag: "🇺🇾" },
+    "58": { name: "Venezuela", flag: "🇻🇪" },
+    // Puedes agregar más países si lo deseas
+};
 
-let handler = async (m, { conn, usedPrefix, command}) => {
-  let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-  let bio = await conn.fetchStatus(who).catch(_ => 'undefined')
-  let biot = bio.status?.toString() || 'Sin Info'
-  let user = global.db.data.users[who]
-  let pp = await conn.profilePictureUrl(who, 'image').catch(_ => 'https://i.ibb.co/P4nbf7g/file.jpg')
-  let { exp, limit, name, registered, regTime, age, level } = global.db.data.users[who]
-  let { min, xp, max } = xpRange(user.level, global.multiplier)
-  let username = conn.getName(who)
-  let prem = global.prems.includes(who.split`@`[0])
-  let sn = createHash('md5').update(who).digest('hex')
-  let api = await axios.get(`https://deliriusapi-official.vercel.app/tools/country?text=${PhoneNumber('+' + who.replace('@s.whatsapp.net', '')).getNumber('international')}`)
-  let userNationalityData = api.data.result
-  let userNationality = userNationalityData ? `${userNationalityData.name} ${userNationalityData.emoji}` : 'Desconocido'
-  let img = await (await fetch(`${pp}`)).buffer()
-  let txt = ` –  *P E R F I L  -  U S E R*\n\n`
-      txt += `┌  ✩  *Nombre* : ${name}\n`
-      txt += `│  ✩  *Edad* : ${registered ? `${age} años` : '×'}\n`
-      txt += `│  ✩  *Numero* : ${PhoneNumber('+' + who.replace('@s.whatsapp.net', '')).getNumber('international')}\n`
-      txt += `│  ✩  *Nacionalidad* : ${userNationality}\n`
-      txt += `│  ✩  *Link* : wa.me/${who.split`@`[0]}\n`
-      txt += `│  ✩  *Estrellas* : ${limit}\n`
-      txt += `│  ✩  *Nivel* : ${level}\n`
-      txt += `│  ✩  *XP* : Total ${exp} (${user.exp - min}/${xp})\n`
-      txt += `│  ✩  *Premium* : ${prem ? 'Si' : 'No'}\n`
-      txt += `└  ✩  *Registrado* : ${registered ? 'Si': 'No'}`
-  let mentionedJid = [who]
-await conn.sendFile(m.chat, img, 'thumbnail.jpg', txt, m)
-}
-handler.help = ['perfil', 'perfil *@user*']
-handler.tags = ['rg']
-handler.command = /^(perfil|profile)$/i
-handler.register = true
-
-export default handler
-
-
-const more = String.fromCharCode(8206)
-const readMore = more.repeat(4001)
-
-function formatDate(n, locale = 'es-US') {
-  let d = new Date(n)
-  return d.toLocaleDateString(locale, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  })
+// Función para obtener el nombre del país y la bandera según el prefijo del número
+function getCountryByPrefix(phoneNumber) {
+    let prefix = phoneNumber.getCountryCode();
+    let country = countryPrefixes[prefix];
+    return country ? `${country.flag} ${country.name}` : 'Desconocido';
 }
 
-function formatHour(n, locale = 'en-US') {
-  let d = new Date(n)
-  return d.toLocaleString(locale, {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true
-  })
-}
+let handler = async (m, { conn, usedPrefix }) => {
+    let fkontak = {
+        "key": {
+            "participants": "0@s.whatsapp.net",
+            "remoteJid": "status@broadcast",
+            "fromMe": false,
+            "id": "Halo"
+        },
+        "message": {
+            "contactMessage": {
+                "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
+            }
+        },
+        "participant": "0@s.whatsapp.net"
+    };
+
+    let user = global.db.data.users[m.sender];
+    let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender;
+
+    // Verificar si el usuario está registrado
+    if (!user.registered) {
+        conn.reply(m.chat, 'Por favor, regístrate usando el comando `.reg nombre.edad.pais` antes de usar este comando.', m);
+        return;
+    }
+
+    let pp = 'https://qu.ax/KFrad.jpg';
+    try {
+        pp = await conn.getProfilePicture(who);
+    } catch (e) {
+        // Manejar errores si es necesario
+    }
+
+    let { name, limit, lastclaim, registered, regTime, age, banned, level, premiumTime } = global.db.data.users[who];
+    let mentionedJid = [who];
+    let username = conn.getName(who);
+    let prem = global.prems.includes(who.split`@`[0]);
+    let sn = createHash('md5').update(who).digest('hex');
+
+    // Calcular el top de créditos
+    let sortedUsers = Object.entries(global.db.data.users)
+        .filter(([jid, user]) => user.registered)
+        .sort(([, a], [, b]) => b.limit - a.limit);
+
+    let topPosition = sortedUsers.findIndex(([jid, u]) => jid === who) + 1;
+
+    // Calcular el rango del usuario
+    let rank;
+    if (limit >= 1700) rank = '💮 LEYENDA';
+    else if (limit >= 1200) rank = '🃏 MAESTRO';
+    else if (limit >= 700) rank = '💎 DIAMANTE';
+    else if (limit >= 300) rank = '🥇 ORO';
+    else if (limit >= 100) rank = '🥈 PLATA';
+    else rank = '🥉 BRONCE';
+
+    // Verificar si es usuario premium y cuánto tiempo le queda
+    let premiumStatus = prem ? `Usuario VIP (Expira en ${Math.max(0, Math.floor((premiumTime - Date.now()) / (24 * 60 * 60 * 1000)))} días)` : 'Usuario Regular';
+
+    // Obtener el país y la bandera basado en el prefijo del número de teléfono
+    let phoneNumber;
+    try {
+        phoneNumber = new PhoneNumber('+' + who.replace('@s.whatsapp.net', ''));
+    } catch (e) {
+        phoneNumber = { getCountryCode: () => '', getNumber: () => 'Desconocido' };
+    }
+    let country = getCountryByPrefix(phoneNumber);
+
+    // Definir estado basado en si el usuario está baneado o no
+    let estado = banned ? 'BANEADO [❌]' : 'LIBRE [✅]';
+
+    let str = `*[𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏]*
+    
+*PERFIL DE* @${who.split('@')[0]}
+
+*[👤] NOMBRE →* ${name}
+*[📅] EDAD →* ${age} años
+*[🔗] ID →* ${phoneNumber.getNumber('international')}
+*[💬] NICKNAME →* ${username}
+*[🌍] NACIONALIDAD →* ${country}
+*[💸] CRÉDITOS →* ${limit}
+*[💵] CRÉDITOS EN EL BANCO →* ${user.banco || 0}
+*[🔱] TOP →* ${topPosition} de ${sortedUsers.length}
+*[🔱] RANGO →* ${rank}
+*[🔒] ESTADO →* ${estado}
+
+*[🔢] NÚMERO DE SERIE:* ${sn}
+
+.topcreditos para ver los mejores en créditos`;
+
+    conn.sendFile(m.chat, pp, 'pp.jpg', str, fkontak, false, { contextInfo: { mentionedJid }});
+};
+
+handler.help = ['profile [@user]'];
+handler.tags = ['xp'];
+handler.command = /^perfil|profile?$/i;
+
+export default handler;
