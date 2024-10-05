@@ -26,13 +26,19 @@ ${userList}
 ╚══════════════════════════╝
         `;
 
-        // URL del video
-        let videoUrl = 'https://qu.ax/gJBVt.mp4'; // La URL del video proporcionada
+        // URL del GIF
+        let gifUrl = 'https://giphy.com/gifs/HAyv9qZqzExP0ZQOrt'; // Cambia esta URL si lo necesitas
 
-        // Enviar el video junto con el mensaje de usuarios
-        await conn.sendFile(m.chat, videoUrl, 'usuarios.mp4', info, m, { mentions: registeredUsers });
+        // Verificar si el GIF es accesible (esto es opcional pero útil)
+        if (!gifUrl) {
+            console.log('La URL del GIF no es válida');
+            return conn.reply(m.chat, 'Error al obtener el GIF.', m);
+        }
+
+        // Enviar el GIF junto con el mensaje de usuarios
+        await conn.sendFile(m.chat, gifUrl, 'usuarios.gif', info, m, { mentions: registeredUsers });
         console.log('Mensaje enviado correctamente');
-
+        
     } catch (err) {
         console.error('Error al ejecutar el comando:', err);
         conn.reply(m.chat, 'Hubo un error al ejecutar el comando.', m);
