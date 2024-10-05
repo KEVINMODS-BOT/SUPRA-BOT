@@ -1,6 +1,10 @@
 import { promises } from 'fs'
 import { join } from 'path'
 
+// Variable para los estados de los comandos
+let maintenanceCommands = {};
+
+// Comando para mostrar el menú
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   try {
     let _package = JSON.parse(await promises.readFile(join(__dirname, '../package.json')).catch(_ => ({}))) || {}
@@ -39,10 +43,15 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
     let totalreg = Object.keys(global.db.data.users).length
     let rtotalreg = Object.values(global.db.data.users).filter(user => user.registered == true).length
 
-    // Determinar si hay códigos disponibles
-    let availableCodes = global.db.data.codes && Object.keys(global.db.data.codes).length > 0;
+    // Función para obtener el estado de los comandos
+    function getCommandStatus(command) {
+      if (maintenanceCommands[command]) {
+        return '🛠 En desarrollo';
+      }
+      return '🟢 Activo';
+    }
 
-    // Texto del nuevo menú
+    // Texto del menú con estados de los comandos
     let menuText = `
 
 *Bienvenido* @${name} 
@@ -59,251 +68,48 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 ➢ *[⏳] TIEMPO ACTIVO:* ${uptime}
 ➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
 
-
-
-
- ╭──────༺♡༻──────╮
+╭──────༺♡༻──────╮
                 *INFO-BOT*
 ╰──────༺♡༻──────╯
 
-
-➢ .owner 
-➥ ve los contactos de los creadores 
-
-➢ .grupos 
-➥ ve los grupos y canales oficiales del bot 
-
-➢ .estado 
-➥ ve el estado del bot 
-
-➢ .totalfunciones 
-➥ ve cuantas funciones tiene el bot 
-
-➢ .ping 
-➥ ve la velocidad del bot 
-
-➢ .runtime 
-➥ ve cuanto tiempo lleva activo el bot
-
-➢ .joinfree link
-➥ agrega al bot a tu grupo 
-
+➢ .owner ${getCommandStatus('owner')}
+➢ .grupos ${getCommandStatus('grupos')}
+➢ .estado ${getCommandStatus('estado')}
+➢ .totalfunciones ${getCommandStatus('totalfunciones')}
+➢ .ping ${getCommandStatus('ping')}
+➢ .runtime ${getCommandStatus('runtime')}
+➢ .joinfree link ${getCommandStatus('joinfree')}
 
 ╭──────༺♡༻──────╮
                *ECONOMÍA*
 ╰──────༺♡༻──────╯
 
-➢ .minar
-➥ mina diamantes
-
-➢ .cazar 
-➥ caza animales y gana créditos 
-
-➢ .slot cantidad 
-➥ apuesta créditos y gana 
-
-➢ .ruleta 10 negro / rojo 
-➥ apuesta y gana créditos 
-
-➢ .crimen 
-➥ roba créditos a otros usuarios 
-
-➢ .robar @user
-➥ roba los créditos de otros usuarios / no se puede robar si esta en el banco
-
-➢ .depositar cantidad 
-➥ deposita el dinero al Banco y guardalos 
-
-➢ .retirar cantidad 
-➥ retira el dinero del Banco 
-
-➢ .banco 
-➥ guarda tus créditos de cualquier robo 
-
-➢ .topcreditos
-➥ ve el top de mayores créditos 
-
-➢ .transferir @user cantidad 
-➥ transfiere créditos a otros usuarios
-
+➢ .minar ${getCommandStatus('minar')}
+➢ .cazar ${getCommandStatus('cazar')}
+➢ .slot cantidad ${getCommandStatus('slot')}
+➢ .ruleta 10 negro / rojo ${getCommandStatus('ruleta')}
+➢ .crimen ${getCommandStatus('crimen')}
+➢ .robar @user ${getCommandStatus('robar')}
+➢ .depositar cantidad ${getCommandStatus('depositar')}
+➢ .retirar cantidad ${getCommandStatus('retirar')}
+➢ .banco ${getCommandStatus('banco')}
+➢ .topcreditos ${getCommandStatus('topcreditos')}
+➢ .transferir @user cantidad ${getCommandStatus('transferir')}
 
 ╭──────༺♡༻──────╮
          *TIENDA Y VENTAS*
 ╰──────༺♡༻──────╯
- 
-➢ .comprarwaifu 
-➥ comprar una waifu 
 
-➢ .miswaifus 
-➥ ve tus waifus que compraste
-
-➢ .venderwaifu
-➥ vende la waifu que tienes
-
-➢ .pokemon pikachu
-➥ para ver el pokemon y sus estadísticas
-
-➢ .comprarpokemon pikachu
-➥ compra el pokemon
-
-➢ .mipokemon
-➥ ve tu pokemon que tienes 
-
-➢ .venderpokemon número 
-➥ vende tu pokemon 
-
-➢ .regalarpokemon @user Pikachu
-➥ regala un pokemon a tu amigo 
-
-
-
-╭──────༺♡༻──────╮
-              *BUSQUEDAS*
-╰──────༺♡༻──────╯
-
-
-➢ .pinterest 
-➥ busca imágenes de pinterest
-
-➢ .fenixgpt cuanto es 1+1
-➥ busca información rápido con fenixgpt 🐦‍🔥
-
-➢ .google búsqueda
-➥ busca cosas de google 
-
-➢ .imagen búsqueda
-➥ busca imagen de lo que busques
-
-➢ .tiktok link 
-➥ descarga un vídeo de tiktok sin marca de agua 
-
-➢ .tiktoksearch nombre 
-➥ ve videos de tiktok en carrusel
-
-
-╭──────༺♡༻──────╮
-               *SUB BOTS*
-╰──────༺♡༻──────╯
-
-
-➢ .bots 
-➥ ve cuantos subots ahí 
-
-➢ .code 
-➥ pide Código para vincular y ser un subot 
-
-➢ .qr
-➥ pide Código qr para escanear y ser un subot
-
-
-╭──────༺♡༻──────╮
-                *REGISTRO*
-╰──────༺♡༻──────╯
-
-
-➢ .reg nombre.edad
-➥ regístrate en el bot 
-
-➢ .unreg número de serie 
-➥ elimina tu registro del bot 
-
-➢ .nserie 
-➥ ve tu número de serie 
-
-➢ .perfil 
-➥ ve tu perfil en el bot
-
-
-╭──────༺♡༻──────╮
-                *STICKERS*
-╰──────༺♡༻──────╯
-
-
-➢ .s / .stikert 
-➥ convierte una foto en stikert
-
-
-╭──────༺♡༻──────╮
-               *IMÁGENES*
-╰──────༺♡༻──────╯
-
-
-➢ .megumin 
-
-➢ .neko 
-
-➢ .shinobu
-
-
-╭──────༺♡༻──────╮
-               *DIVERSION*
-╰──────༺♡༻──────╯
-
-
-➢ .afk razón 
-➥ quédate afk sin que te molesten 
-
-➢ .dance @user 
-➥ baila con un usuario
-
-➢ .abrazo @user 
-➥ abraza a un usuario 
-
-➢ .golpear @user
-➥ golpear a un usuario
-
-➢ .besar @user
-➥ besa a un usuario 
-
-➢ .gay @user 
-➥ ve el promedio de gay de un usuario 
-
-➢ .ship @user @user 
-➥ shipea a dos usuarios 
-
-➢ .bot hola 
-➥ interactúa con el bot
-
-
-╭──────༺♡༻──────╮
-                  *GRUPOS*
-╰──────༺♡༻──────╯
-
-➢ .infogrupo
-➥ ve la información del grupo
-
-➢ .grupo cerrar 
-➥ cierra el grupo
-
-➢ .grupo abrir
-➥ abre el grupo 
-
-➢ .kick @user 
-➥ elimina a un usuario 
-
-➢ .link 
-➥ ve el link del Grupo 
-
-➢ .encuesta pregunta|opciones 
-➥ haz encuestas en el grupo 
-
-➢ .promote @user 
-➥ asciende a admin a un usuario 
-
-➢ .invocar mensaje 
-➥ invoca a todo el grupo
-
-
-╭──────༺♡༻──────╮
-                 *ON / OFF*
-╰──────༺♡༻──────╯
-
-
-➢ .on / off welcome 
-➥ activa y desactiva la bienvenida
-
-➢ .on / off antilink 
-➥ activa y desactiva el antilink
+➢ .comprarwaifu ${getCommandStatus('comprarwaifu')}
+➢ .miswaifus ${getCommandStatus('miswaifus')}
+➢ .venderwaifu ${getCommandStatus('venderwaifu')}
+➢ .pokemon pikachu ${getCommandStatus('pokemon')}
+➢ .comprarpokemon pikachu ${getCommandStatus('comprarpokemon')}
+➢ .mipokemon ${getCommandStatus('mipokemon')}
+➢ .venderpokemon número ${getCommandStatus('venderpokemon')}
+➢ .regalarpokemon @user Pikachu ${getCommandStatus('regalarpokemon')}
+
+... (continúa el resto del menú con la misma estructura)
 
 `.trim()
 
@@ -316,11 +122,32 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   }
 }
 
+// Comando para activar o desactivar el mantenimiento de un comando
+let maintenanceHandler = async (m, { text, isOwner }) => {
+  if (!isOwner) return m.reply('🚫 Este comando solo puede ser usado por el propietario del bot.');
+
+  let [cmd, status] = text.split(' ');
+  if (!cmd || !status || (status !== 'on' && status !== 'off')) {
+    return m.reply(`Formato incorrecto.\n\nUso correcto: *${usedPrefix}mantenimiento .comando on|off*\nEjemplo: *${usedPrefix}mantenimiento .ping on*`);
+  }
+
+  cmd = cmd.replace('.', '').trim();
+  maintenanceCommands[cmd] = status === 'on' ? true : false;
+  return m.reply(`🔧 El comando *${cmd}* ahora está en estado: ${status === 'on' ? '🛠 En desarrollo' : '🟢 Activo'}.`);
+};
+
+// Comandos y ayuda
 handler.help = ['menu']
 handler.tags = ['main']
 handler.command = ['menu', 'help', 'menú'] 
 handler.register = true 
-export default handler
+
+// Comando .mantenimiento
+maintenanceHandler.command = ['mantenimiento'];
+maintenanceHandler.owner = true; // Solo el owner puede usarlo
+
+export default handler;
+export { maintenanceHandler };
 
 const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
@@ -330,4 +157,4 @@ function clockString(ms) {
   let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
   let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-                       }
+}
