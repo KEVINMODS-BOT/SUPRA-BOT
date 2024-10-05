@@ -109,7 +109,6 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 ➢ .venderpokemon número ${getCommandStatus('venderpokemon')}
 ➢ .regalarpokemon @user Pikachu ${getCommandStatus('regalarpokemon')}
 
-... (continúa el resto del menú con la misma estructura)
 
 `.trim()
 
