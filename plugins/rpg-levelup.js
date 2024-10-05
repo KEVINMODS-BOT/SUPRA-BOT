@@ -31,7 +31,7 @@ ${userList}
 handler.help = ['usuarios'];
 handler.tags = ['group'];
 handler.command = /^usuarios$/i;
-handler.group = true; // Solo funcionará en grupos
+handler.group = false; // Solo funcionará en privado
 handler.admin = false; // No requiere ser admin
 
 export default handler;
