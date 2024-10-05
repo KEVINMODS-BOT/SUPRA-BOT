@@ -5,10 +5,59 @@ import fetch from 'node-fetch';
 // RegEx para el registro
 let Reg = /\|?(.*)([.|] *?)([0-9]*)$/i;
 
+// Base de datos de países y prefijos
+const countries = {
+    '54': { name: 'Argentina', emoji: '🇦🇷' },
+    '591': { name: 'Bolivia', emoji: '🇧🇴' },
+    '55': { name: 'Brasil', emoji: '🇧🇷' },
+    '56': { name: 'Chile', emoji: '🇨🇱' },
+    '57': { name: 'Colombia', emoji: '🇨🇴' },
+    '506': { name: 'Costa Rica', emoji: '🇨🇷' },
+    '53': { name: 'Cuba', emoji: '🇨🇺' },
+    '593': { name: 'Ecuador', emoji: '🇪🇨' },
+    '503': { name: 'El Salvador', emoji: '🇸🇻' },
+    '502': { name: 'Guatemala', emoji: '🇬🇹' },
+    '504': { name: 'Honduras', emoji: '🇭🇳' },
+    '52': { name: 'México', emoji: '🇲🇽' },
+    '505': { name: 'Nicaragua', emoji: '🇳🇮' },
+    '507': { name: 'Panamá', emoji: '🇵🇦' },
+    '595': { name: 'Paraguay', emoji: '🇵🇾' },
+    '51': { name: 'Perú', emoji: '🇵🇪' },
+    '1': { name: 'Puerto Rico', emoji: '🇵🇷' },
+    '598': { name: 'Uruguay', emoji: '🇺🇾' },
+    '58': { name: 'Venezuela', emoji: '🇻🇪' },
+    '1': { name: 'República Dominicana', emoji: '🇩🇴' },
+    '1': { name: 'Haití', emoji: '🇭🇹' },
+    '501': { name: 'Belice', emoji: '🇧🇿' },
+    '592': { name: 'Guyana', emoji: '🇬🇾' },
+    '597': { name: 'Surinam', emoji: '🇸🇷' },
+    '1': { name: 'Jamaica', emoji: '🇯🇲' },
+    '1': { name: 'Barbados', emoji: '🇧🇧' },
+    '1': { name: 'Bahamas', emoji: '🇧🇸' },
+    '1': { name: 'Trinidad y Tobago', emoji: '🇹🇹' },
+    '1': { name: 'San Cristóbal y Nieves', emoji: '🇰🇳' },
+    '1': { name: 'Santa Lucía', emoji: '🇱🇨' },
+    '1': { name: 'San Vicente y las Granadinas', emoji: '🇻🇨' },
+    '1': { name: 'Granada', emoji: '🇬🇩' },
+    '1': { name: 'Antigua y Barbuda', emoji: '🇦🇬' },
+    '1': { name: 'Dominica', emoji: '🇩🇲' },
+    '1': { name: 'Anguila', emoji: '🇦🇮' },
+    '1': { name: 'Islas Caimán', emoji: '🇰🇾' },
+    '1': { name: 'Islas Vírgenes Británicas', emoji: '🇻🇬' },
+    '1': { name: 'Montserrat', emoji: '🇲🇸' },
+};
+
 let handler = async function (m, { conn, text, usedPrefix, command }) {
     let user = global.db.data.users[m.sender];
     let name2 = conn.getName(m.sender);
-    
+
+    // Obtener el prefijo del número (los primeros 2-3 dígitos)
+    let phoneNumber = m.sender.split('@')[0];  // Número del usuario sin el dominio
+    let prefix = phoneNumber.slice(0, phoneNumber.length > 10 ? 2 : 1); // Detectar prefijo por longitud
+
+    // Buscar el país por prefijo
+    let countryInfo = countries[prefix] || { name: 'Desconocido', emoji: '🌍' };
+
     // Si se usa el comando de registro
     if (command === 'register' || command === 'reg' || command === 'verify') {
         // Verificar si el usuario ya está registrado
@@ -36,19 +85,21 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
         // Generar número de serie
         let sn = createHash('md5').update(m.sender).digest('hex');
-        let video = await (await fetch(`https://qu.ax/PtaPv.mp4`)).buffer(); // Cambia por la URL de tu video
+        let video = await (await fetch(`https://qu.ax/Jqiwf.mp4`)).buffer(); // Cambia por la URL de tu video
 
         // Mensaje de registro
-        let txt = ` –  *R E G I S T R O  -  U S E R*\n\n`;
+        let txt = ` –  *R E G I S T R O  -  E X I T O S O*\n\n`;
         txt += `┌  ✩  *Nombre* : ${name}\n`;
         txt += `│  ✩  *Edad* : ${age} años\n`;
+        txt += `│  ✩  *País* : ${countryInfo.name} ${countryInfo.emoji}\n`;
         txt += `│  ✩  *Número de serie*\n`;
-        txt += `└  ✩  ${sn}`;
+        txt += `└  ✩  ${sn}\n\n`;
+        txt += `✨ ¡Usted está registrado en mi base de datos! ✨`;
 
         // Enviar el video junto con el texto
         await conn.sendMessage(m.chat, { video: video, caption: txt });
         await m.react('✅');
-    } 
+    }
 
     // Si se usa el comando de mostrar usuarios
     else if (command === 'usuarios') {
