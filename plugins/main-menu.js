@@ -1,271 +1,333 @@
 import { promises } from 'fs'
 import { join } from 'path'
 
-// Variable para los estados de los comandos
-let maintenanceCommands = {};
-
-// Comando para mostrar el menú
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   try {
+    let _package = JSON.parse(await promises.readFile(join(__dirname, '../package.json')).catch(_ => ({}))) || {}
     let { exp, limit, level } = global.db.data.users[m.sender]
     let name = await conn.getName(m.sender)
-    let uptime = clockString(process.uptime() * 1000)
+    let d = new Date(new Date() + 3600000)
+    let locale = 'es'
+    let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
+    let week = d.toLocaleDateString(locale, { weekday: 'long' })
+    let date = d.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+    let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(d)
+    let time = d.toLocaleTimeString(locale, {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    })
+    let _uptime = process.uptime() * 1000
+    let _muptime
+    if (process.send) {
+      process.send('uptime')
+      _muptime = await new Promise(resolve => {
+        process.once('message', resolve)
+        setTimeout(resolve, 1000)
+      }) * 1000
+    }
+    let muptime = clockString(_muptime)
+    let uptime = clockString(_uptime)
     let totalreg = Object.keys(global.db.data.users).length
     let rtotalreg = Object.values(global.db.data.users).filter(user => user.registered == true).length
 
-    // Función para obtener el estado de los comandos
-    function getCommandStatus(command) {
-      if (maintenanceCommands[command]) {
-        return '🛠 En desarrollo';
-      }
-      return '🟢 Activo';
-    }
+    // Determinar si hay códigos disponibles
+    let availableCodes = global.db.data.codes && Object.keys(global.db.data.codes).length > 0;
 
-    // Texto del menú con estados de los comandos
+    // Texto del nuevo menú
     let menuText = `
 
-*Bienvenido* @${name}
+*Bienvenido* @${name} 
+
+*Puede seguir el canal del bot:* https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42
 
 *🔰INFORMACIÓN DEL BOT🔰*
+
+*𝘈𝘊𝘛𝘜𝘈𝘓𝘐𝘡𝘈𝘊𝘐𝘖𝘕  < 1.2.1 >*
 
 ➢ *[👨🏻‍💻] CREADOR:* ALDAIR
 ➢ *[💮] ESTADO:* ACTIVO 🟢
 ➢ *[👥] USUARIOS REGISTRADOS:* ${rtotalreg} 
 ➢ *[⏳] TIEMPO ACTIVO:* ${uptime}
+➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
 
-╭──────༺♡༻──────╮
+
+
+
+ ╭──────༺♡༻──────╮
                 *INFO-BOT*
 ╰──────༺♡༻──────╯
 
-➢ .owner ${getCommandStatus('owner')}
+
+➢ .owner 
 ➥ ve los contactos de los creadores 
 
-➢ .grupos ${getCommandStatus('grupos')}
+➢ .grupos 
 ➥ ve los grupos y canales oficiales del bot 
 
-➢ .estado ${getCommandStatus('estado')}
+➢ .estado 
 ➥ ve el estado del bot 
 
-➢ .totalfunciones ${getCommandStatus('totalfunciones')}
-➥ ve cuántas funciones tiene el bot 
+➢ .totalfunciones 
+➥ ve cuantas funciones tiene el bot 
 
-➢ .ping ${getCommandStatus('ping')}
+➢ .ping 
 ➥ ve la velocidad del bot 
 
-➢ .runtime ${getCommandStatus('runtime')}
-➥ ve cuánto tiempo lleva activo el bot
+➢ .runtime 
+➥ ve cuanto tiempo lleva activo el bot
 
-➢ .joinfree link ${getCommandStatus('joinfree')}
+➢ .joinfree link
 ➥ agrega al bot a tu grupo 
+
 
 ╭──────༺♡༻──────╮
                *ECONOMÍA*
 ╰──────༺♡༻──────╯
 
-➢ .minar ${getCommandStatus('minar')}
+➢ .minar
 ➥ mina diamantes
 
-➢ .cazar ${getCommandStatus('cazar')}
+➢ .cazar 
 ➥ caza animales y gana créditos 
 
-➢ .slot cantidad ${getCommandStatus('slot')}
+➢ .slot cantidad 
 ➥ apuesta créditos y gana 
 
-➢ .ruleta 10 negro / rojo ${getCommandStatus('ruleta')}
+➢ .ruleta 10 negro / rojo 
 ➥ apuesta y gana créditos 
 
-➢ .crimen ${getCommandStatus('crimen')}
+➢ .crimen 
 ➥ roba créditos a otros usuarios 
 
-➢ .robar @user ${getCommandStatus('robar')}
-➥ roba los créditos de otros usuarios / no se puede robar si está en el banco
+➢ .robar @user
+➥ roba los créditos de otros usuarios / no se puede robar si esta en el banco
 
-➢ .depositar cantidad ${getCommandStatus('depositar')}
-➥ deposita el dinero al Banco y guárdalo
+➢ .depositar cantidad 
+➥ deposita el dinero al Banco y guardalos 
 
-➢ .retirar cantidad ${getCommandStatus('retirar')}
+➢ .retirar cantidad 
 ➥ retira el dinero del Banco 
 
-➢ .banco ${getCommandStatus('banco')}
+➢ .banco 
 ➥ guarda tus créditos de cualquier robo 
 
-➢ .topcreditos ${getCommandStatus('topcreditos')}
+➢ .topcreditos
 ➥ ve el top de mayores créditos 
 
-➢ .transferir @user cantidad ${getCommandStatus('transferir')}
+➢ .transferir @user cantidad 
 ➥ transfiere créditos a otros usuarios
+
 
 ╭──────༺♡༻──────╮
          *TIENDA Y VENTAS*
 ╰──────༺♡༻──────╯
+ 
+➢ .comprarwaifu 
+➥ comprar una waifu 
 
-➢ .comprarwaifu ${getCommandStatus('comprarwaifu')}
-➥ compra una waifu 
-
-➢ .miswaifus ${getCommandStatus('miswaifus')}
+➢ .miswaifus 
 ➥ ve tus waifus que compraste
 
-➢ .venderwaifu ${getCommandStatus('venderwaifu')}
+➢ .venderwaifu
 ➥ vende la waifu que tienes
 
-➢ .pokemon pikachu ${getCommandStatus('pokemon')}
+➢ .pokemon pikachu
 ➥ para ver el pokemon y sus estadísticas
 
-➢ .comprarpokemon pikachu ${getCommandStatus('comprarpokemon')}
+➢ .comprarpokemon pikachu
 ➥ compra el pokemon
 
-➢ .mipokemon ${getCommandStatus('mipokemon')}
+➢ .mipokemon
 ➥ ve tu pokemon que tienes 
 
-➢ .venderpokemon número ${getCommandStatus('venderpokemon')}
+➢ .venderpokemon número 
 ➥ vende tu pokemon 
 
-➢ .regalarpokemon @user Pikachu ${getCommandStatus('regalarpokemon')}
+➢ .regalarpokemon @user Pikachu
 ➥ regala un pokemon a tu amigo 
+
+
 
 ╭──────༺♡༻──────╮
               *BUSQUEDAS*
 ╰──────༺♡༻──────╯
 
-➢ .pinterest ${getCommandStatus('pinterest')}
-➥ busca imágenes de Pinterest
 
-➢ .fenixgpt cuanto es 1+1 ${getCommandStatus('fenixgpt')}
+➢ .pinterest 
+➥ busca imágenes de pinterest
+
+➢ .fenixgpt cuanto es 1+1
 ➥ busca información rápido con fenixgpt 🐦‍🔥
 
-➢ .google búsqueda ${getCommandStatus('google')}
-➥ busca cosas en Google 
+➢ .google búsqueda
+➥ busca cosas de google 
 
-➢ .imagen búsqueda ${getCommandStatus('imagen')}
+➢ .imagen búsqueda
 ➥ busca imagen de lo que busques
 
-➢ .tiktok link ${getCommandStatus('tiktok')}
-➥ descarga un vídeo de TikTok sin marca de agua 
+➢ .tiktok link 
+➥ descarga un vídeo de tiktok sin marca de agua 
 
-➢ .tiktoksearch nombre ${getCommandStatus('tiktoksearch')}
-➥ ve videos de TikTok en carrusel
+➢ .tiktoksearch nombre 
+➥ ve videos de tiktok en carrusel
+
 
 ╭──────༺♡༻──────╮
                *SUB BOTS*
 ╰──────༺♡༻──────╯
 
-➢ .bots ${getCommandStatus('bots')}
-➥ ve cuántos subbots hay 
 
-➢ .code ${getCommandStatus('code')}
-➥ pide Código para vincular y ser un subbot 
+➢ .bots 
+➥ ve cuantos subots ahí 
 
-➢ .qr ${getCommandStatus('qr')}
-➥ pide Código QR para escanear y ser un subbot
+➢ .code 
+➥ pide Código para vincular y ser un subot 
+
+➢ .qr
+➥ pide Código qr para escanear y ser un subot
+
 
 ╭──────༺♡༻──────╮
                 *REGISTRO*
 ╰──────༺♡༻──────╯
 
-➢ .reg nombre.edad ${getCommandStatus('reg')}
+
+➢ .reg nombre.edad
 ➥ regístrate en el bot 
 
-➢ .unreg número de serie ${getCommandStatus('unreg')}
+➢ .unreg número de serie 
 ➥ elimina tu registro del bot 
 
-➢ .nserie ${getCommandStatus('nserie')}
+➢ .nserie 
 ➥ ve tu número de serie 
 
-➢ .perfil ${getCommandStatus('perfil')}
+➢ .perfil 
 ➥ ve tu perfil en el bot
+
 
 ╭──────༺♡༻──────╮
                 *STICKERS*
 ╰──────༺♡༻──────╯
 
-➢ .s / .stikert ${getCommandStatus('stikert')}
-➥ convierte una foto en sticker
+
+➢ .s / .stikert 
+➥ convierte una foto en stikert
+
 
 ╭──────༺♡༻──────╮
                *IMÁGENES*
 ╰──────༺♡༻──────╯
 
-➢ .megumin ${getCommandStatus('megumin')}
-➢ .neko ${getCommandStatus('neko')}
-➢ .shinobu ${getCommandStatus('shinobu')}
+
+➢ .megumin 
+
+➢ .neko 
+
+➢ .shinobu
+
 
 ╭──────༺♡༻──────╮
                *DIVERSION*
 ╰──────༺♡༻──────╯
 
-➢ .afk razón ${getCommandStatus('afk')}
-➥ quédate AFK sin que te molesten 
 
-➢ .dance @user ${getCommandStatus('dance')}
+➢ .afk razón 
+➥ quédate afk sin que te molesten 
+
+➢ .dance @user 
 ➥ baila con un usuario
 
-➢ .abrazo @user ${getCommandStatus('abrazo')}
+➢ .abrazo @user 
 ➥ abraza a un usuario 
 
-➢ .golpear @user ${getCommandStatus('golpear')}
-➥ golpea a un usuario
+➢ .golpear @user
+➥ golpear a un usuario
 
-➢ .besar @user ${getCommandStatus('besar')}
+➢ .besar @user
 ➥ besa a un usuario 
 
-➢ .gay @user ${getCommandStatus('gay')}
+➢ .gay @user 
 ➥ ve el promedio de gay de un usuario 
 
-➢ .ship @user @user ${getCommandStatus('ship')}
+➢ .ship @user @user 
 ➥ shipea a dos usuarios 
 
-➢ .bot hola ${getCommandStatus('bot')}
+➢ .bot hola 
 ➥ interactúa con el bot
+
 
 ╭──────༺♡༻──────╮
                   *GRUPOS*
 ╰──────༺♡༻──────╯
 
-➢ .i༻─ ${getCommandStatus('infogrupo')}
+➢ .infogrupo
 ➥ ve la información del grupo
 
-➢ .grupo cerrar ${getCommandStatus('grupo')}
+➢ .grupo cerrar 
 ➥ cierra el grupo
 
-➢ .grupo abrir ${getCommandStatus('grupo')}
+➢ .grupo abrir
 ➥ abre el grupo 
 
-➢ .kick @user ${getCommandStatus('kick')}
+➢ .kick @user 
 ➥ elimina a un usuario 
 
-➢ .link ${getCommandStatus('link')}
-➥ ve el link del grupo 
+➢ .link 
+➥ ve el link del Grupo 
 
-➢ .encuesta pregunta|opciones ${getCommandStatus('encuesta')}
+➢ .encuesta pregunta|opciones 
 ➥ haz encuestas en el grupo 
 
-➢ .promote @user ${getCommandStatus('promote')}
+➢ .promote @user 
 ➥ asciende a admin a un usuario 
 
-➢ .invocar mensaje ${getCommandStatus('invocar')}
+➢ .invocar mensaje 
 ➥ invoca a todo el grupo
+
 
 ╭──────༺♡༻──────╮
                  *ON / OFF*
 ╰──────༺♡༻──────╯
 
-➢ .on / off welcome ${getCommandStatus('welcome')}
+
+➢ .on / off welcome 
 ➥ activa y desactiva la bienvenida
 
-➢ .on / off antilink ${getCommandStatus('antilink')}
+➢ .on / off antilink 
 ➥ activa y desactiva el antilink
-    `;
 
-    // Enviar el menú
-    await conn.sendMessage(m.chat, { text: menuText }, { quoted: m });
+`.trim()
+
+    let imageUrl = 'https://qu.ax/LXzyv.jpg' // Reemplaza esto con el enlace directo a tu imagen
+    await conn.sendMessage(m.chat, { image: { url: imageUrl }, caption: menuText }, { quoted: m })
+
   } catch (e) {
-    console.log(e);
-    await conn.reply(m.chat, 'Hubo un error al generar el menú.', m);
+    conn.reply(m.chat, 'Lo sentimos, el menú tiene un error.', m)
+    throw e
   }
-};
+}
 
-handler.help = ['menu'];
-handler.tags = ['main'];
-handler.command = /^(menu|help|commands)$/i;
+handler.help = ['menu']
+handler.tags = ['main']
+handler.command = ['menu', 'help', 'menú'] 
+handler.register = true 
+export default handler
 
-module.exports = handler;
+const more = String.fromCharCode(8206)
+const readMore = more.repeat(4001)
+
+function clockString(ms) {
+  let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
+  let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
+  let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
+  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
+                       }
