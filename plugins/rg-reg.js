@@ -85,9 +85,9 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
         // Generar número de serie
         let sn = createHash('md5').update(m.sender).digest('hex');
-        let video = await (await fetch(`https://qu.ax/Jqiwf.mp4`)).buffer(); // Cambia por la URL de tu video
+        let video = await (await fetch(`https://qu.ax/PtaPv.mp4`)).buffer(); // Cambia por la URL de tu video
 
-        // Mensaje de registro
+        // Mensaje de regi stro
         let txt = ` –  *R E G I S T R O  -  E X I T O S O*\n\n`;
         txt += `┌  ✩  *Nombre* : ${name}\n`;
         txt += `│  ✩  *Edad* : ${age} años\n`;
