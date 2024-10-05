@@ -36,7 +36,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
         // Generar número de serie
         let sn = createHash('md5').update(m.sender).digest('hex');
-        let img = await (await fetch(`https://qu.ax/KFrad.jpg`)).buffer();
+        let video = await (await fetch(`https://qu.ax/PtaPv.mp4`)).buffer(); // Cambia por la URL de tu video
 
         // Mensaje de registro
         let txt = ` –  *R E G I S T R O  -  U S E R*\n\n`;
@@ -45,7 +45,8 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
         txt += `│  ✩  *Número de serie*\n`;
         txt += `└  ✩  ${sn}`;
 
-        await conn.sendAi(m.chat, botname, textbot, txt, img, img, canal, m);
+        // Enviar el video junto con el texto
+        await conn.sendMessage(m.chat, { video: video, caption: txt });
         await m.react('✅');
     } 
 
@@ -58,7 +59,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
             // Información de los usuarios
             let info = `
 ╔══════════════════════════╗
-║   𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 ℝ𝕖𝕘𝕚𝕤𝕥𝕒𝕕𝕠𝕤  ║
+║   𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 ℝ𝕖𝕘𝕚𝕤𝕥𝕣𝕒𝕕𝕠𝕤  ║
 ╠══════════════════════════╣
 ║      𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 🟢 : ${totalRegistered}      ║
 ╚══════════════════════════╝
