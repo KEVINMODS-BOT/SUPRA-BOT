@@ -29,7 +29,11 @@ let handler = async (m, { conn }) => {
         let gifUrl = 'https://media.giphy.com/media/HAyv9qZqzExP0ZQOrt/giphy.gif'; // URL directa del GIF
 
         // Enviar el GIF junto con el mensaje de usuarios
-        await conn.sendFile(m.chat, gifUrl, 'usuarios.gif', info, m, { quoted: m });
+        await conn.sendMessage(m.chat, { 
+            text: info, 
+            mentions: [m.sender] 
+        });
+        await conn.sendFile(m.chat, gifUrl, 'usuarios.gif', '', m);
         console.log('Mensaje enviado correctamente');
 
     } catch (err) {
