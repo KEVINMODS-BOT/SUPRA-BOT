@@ -13,32 +13,25 @@ let handler = async (m, { conn }) => {
             return conn.reply(m.chat, 'No hay usuarios registrados.', m);
         }
 
-        // Crear el mensaje de usuarios registrados
-        let userList = registeredUsers.join('\n║      🟢 '); // Formato con icono verde y saltos de línea
+        // Obtener el número de usuarios registrados
+        let numberOfUsers = registeredUsers.length;
 
         // Información de los usuarios
         let info = `
 ╔══════════════════════════╗
-║   𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 ℝ𝕖𝕘𝕚𝕤𝕥𝕣𝕒𝕕𝕠𝕤  ║
+║   𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 ℝ𝕖𝕘𝕚𝕤𝕥𝕒𝕕𝕠𝕤  ║
 ╠══════════════════════════╣
-║      𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 🟢      ║
-${userList}
+║      𝕌𝕤𝕦𝕒𝕣𝕚𝕠𝕤 🟢 : ${numberOfUsers}      ║
 ╚══════════════════════════╝
         `;
 
-        // URL del GIF
-        let gifUrl = 'https://giphy.com/gifs/HAyv9qZqzExP0ZQOrt'; // Cambia esta URL si lo necesitas
-
-        // Verificar si el GIF es accesible (esto es opcional pero útil)
-        if (!gifUrl) {
-            console.log('La URL del GIF no es válida');
-            return conn.reply(m.chat, 'Error al obtener el GIF.', m);
-        }
+        // URL del GIF (debe ser un enlace directo al GIF)
+        let gifUrl = 'https://media.giphy.com/media/HAyv9qZqzExP0ZQOrt/giphy.gif'; // URL directa del GIF
 
         // Enviar el GIF junto con el mensaje de usuarios
-        await conn.sendFile(m.chat, gifUrl, 'usuarios.gif', info, m, { mentions: registeredUsers });
+        await conn.sendFile(m.chat, gifUrl, 'usuarios.gif', info, m, { quoted: m });
         console.log('Mensaje enviado correctamente');
-        
+
     } catch (err) {
         console.error('Error al ejecutar el comando:', err);
         conn.reply(m.chat, 'Hubo un error al ejecutar el comando.', m);
