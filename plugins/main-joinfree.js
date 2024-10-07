@@ -1,33 +1,43 @@
-let handler = async (m, { conn, text }) => {
-  if (!text) throw '🚩 Debes proporcionar el enlace de un grupo.'
+let handler = async (m, { conn, args }) => {
+    if (!args[0]) {
+        return m.reply('Por favor, proporciona un enlace de grupo. Ejemplo: .joinfree https://chat.whatsapp.com/XXXXXXXXXXXXXX\n\nAviso: el bot solo se unirá si el grupo tiene más de 30 participantes.');
+    }
 
-  // Verificar si el link proporcionado es un enlace de grupo de WhatsApp válido
-  let [_, code] = text.match(/chat\.whatsapp\.com\/([0-9A-Za-z]{20,24})/) || []
-  if (!code) throw '🚩 El enlace proporcionado no es válido.'
+    try {
+        // Obtener el código de invitación del enlace
+        let inviteCode = args[0].split('https://chat.whatsapp.com/')[1];
+        
+        // Verificar el enlace de invitación
+        let groupInfo = await conn.queryInvite(inviteCode);
 
-  // Intentar unirse al grupo
-  try {
-    let res = await conn.groupAcceptInvite(code)
-    
-    // Obtener el número o usuario que envió el comando
-    let sender = `@${m.sender.split('@')[0]}`
-    
-    // Mensaje que se enviará al grupo recién unido
-    let message = `*BILL - BOT SE UNIÓ AL GRUPO CORRECTAMENTE*\n\n` +
-                  `*PUEDE SEGUIR EL CANAL DEL BOT* https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42\n\n` +
-                  `Acción realizada por ${sender}`
-    
-    // Enviar el mensaje al grupo al que se unió
-    await conn.sendMessage(res, { text: message, mentions: [m.sender] })
-  } catch (e) {
-    throw '🚩 No se pudo unir al grupo, por favor verifica que el enlace sea correcto y que el bot tenga permisos.'
-  }
+        // Verificar si el grupo tiene más de 30 participantes
+        if (groupInfo.size < 30) {
+            return m.reply(`El grupo ${groupInfo.subject} tiene menos de 30 participantes. No se unirá.`);
+        }
+
+        // Unirse al grupo
+        let result = await conn.groupAcceptInvite(inviteCode);
+
+        // Obtener información del grupo recién unido
+        let groupMetadata = await conn.groupMetadata(result);
+
+        // Enviar mensaje de confirmación en el grupo al que se unió
+        let message = 'El bot se unió al grupo correctamente\n\nEstará en el grupo durante 48 horas\n\nJOINFREE\n\nCANAL:\nhttps://whatsapp.com/channel/0029VafZvB6J3jv3qCnqNu3x';
+        await conn.sendMessage(result, { text: message });
+
+        // Establecer un temporizador para dejar el grupo después de 48 horas
+        setTimeout(async () => {
+            await conn.sendMessage(result, { text: 'El bot se retirará del grupo ahora.' });
+            await conn.groupLeave(result);
+        }, 48 * 60 * 60 * 1000); // 48 horas en milisegundos
+
+    } catch (e) {
+        m.reply('Hubo un error al intentar unirse al grupo. Por favor, verifica el enlace.');
+    }
 }
 
-handler.help = ['joinfree <enlace de grupo>']
-handler.tags = ['group']
-handler.command = ['joinfree'] // Comando a utilizar
+handler.help = ['joinfree'];
+handler.tags = ['group'];
+handler.command = /^joinfree$/i;
 
-handler.register = true // Cualquier usuario puede usarlo
-
-export default handler
+export default handler;
