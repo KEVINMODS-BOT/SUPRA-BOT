@@ -60,8 +60,6 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 ➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
 
 
-
-
  ╭──────༺♡༻──────╮
                 *INFO-BOT*
 ╰──────༺♡༻──────╯
@@ -304,11 +302,9 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
 ➢ .on / off antilink 
 ➥ activa y desactiva el antilink
-
 `.trim()
 
-    let imageUrl = 'https://qu.ax/LXzyv.jpg' // Reemplaza esto con el enlace directo a tu imagen
-    await conn.sendMessage(m.chat, { image: { url: imageUrl }, caption: menuText }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: menuText }, { quoted: m })
 
   } catch (e) {
     conn.reply(m.chat, 'Lo sentimos, el menú tiene un error.', m)
@@ -330,4 +326,4 @@ function clockString(ms) {
   let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
   let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-                       }
+}
