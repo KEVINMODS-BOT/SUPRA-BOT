@@ -3,39 +3,39 @@ let handler = async (m, { conn }) => {
     let name = await conn.getName(m.sender)
     let menuText = `
 
-*Bienvenido* @${name} 
+*Bienvenido* @${who.split('@')[0]} 
 
 *🔰INFORMACIÓN DEL BOT🔰*
 
-➢ *[👨🏻‍💻] CREADOR:* ALDAIR
+➢ *[👨🏻‍💻] CREADOR:* KEVINMODS
 ➢ *[💮] ESTADO:* ACTIVO 🟢
 ➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
 
 
- ╭──────༺♡༻──────╮
-               *INFO-BOT*
+╭──────༺♡༻──────╮
+             📁 *INFO-BOT* 📁
 ╰──────༺♡༻──────╯
 
 
-➢ .owner 
+📁➢ .owner 
 ➥ ve los contactos de los creadores 
 
-➢ .grupos 
+📁➢ .grupos 
 ➥ ve los grupos y canales oficiales del bot 
 
-➢ .estado 
+📁➢ .estado 
 ➥ ve el estado del bot 
 
-➢ .totalfunciones 
+📁➢ .totalfunciones 
 ➥ ve cuantas funciones tiene el bot 
 
-➢ .ping 
+📁➢ .ping 
 ➥ ve la velocidad del bot 
 
-➢ .runtime 
+📁➢ .runtime 
 ➥ ve cuanto tiempo lleva activo el bot
 
-➢ .joinfree link
+📁➢ .joinfree link
 ➥ agrega al bot a tu grupo 
 
 
