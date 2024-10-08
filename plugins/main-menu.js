@@ -3,7 +3,7 @@ let handler = async (m, { conn }) => {
     let name = await conn.getName(m.sender)
     let menuText = `
 
-*Bienvenido* @${who.split('@')[0]} 
+*Bienvenido* @${name} 
 
 *🔰INFORMACIÓN DEL BOT🔰*
 
