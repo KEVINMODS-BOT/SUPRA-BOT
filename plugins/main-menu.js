@@ -260,7 +260,11 @@ let handler = async (m, { conn }) => {
 🔒➢ .invocar mensaje 
 ➥ invoca a todo el grupo
 
+🔒➢ .invite
+➥ invitar a alguien al grupo
 
+🔒➢ .banchat/unbanchat
+➥ banear bot en un grupo
 ╭──────༺♡༻──────╮
                ✅ *ON / OFF* ❌
 ╰──────༺♡༻──────╯
@@ -272,18 +276,19 @@ let handler = async (m, { conn }) => {
 🔄➢ .on / off antilink 
 ➥ activa y desactiva el antilink
 
+
 ╭──────༺♡༻──────╮
        👑 *Comandos Owner* 👑
 ╰──────༺♡༻──────╯
-
-👑➢ .banchat/unbanchat
-➥ Banear bot en grupos
 
 👑➢ .banuser/unbanuser
 ➥ Banear usuarios
 
 👑➢ .addowner/dsowner
 ➥ Dar Owner del bot (próximamente)
+
+👑➢ .agregarcreditos
+➥ Dar creditos a alguien
 `.trim()
 
     await conn.sendMessage(m.chat, { 
