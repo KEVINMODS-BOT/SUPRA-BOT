@@ -22,7 +22,7 @@ let handler = async (m, { conn }) => {
           mediaType: 1,                       // Tipo de medio, 1 es para un link
           mediaUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // URL del canal
           sourceUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // También enlaza al canal
-          thumbnail: null                     // Puedes agregar una imagen si deseas
+          thumbnail: await fetchBuffer("https://example.com/image.jpg") // URL de la imagen
         }
       }
     }, { quoted: m })
@@ -38,3 +38,9 @@ handler.tags = ['main']
 handler.command = ['menu', 'help', 'menú'] 
 handler.register = true 
 export default handler
+
+// Función para descargar la imagen y convertirla en buffer
+async function fetchBuffer(url) {
+  let res = await fetch(url)
+  return await res.buffer()
+}
