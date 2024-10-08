@@ -147,6 +147,12 @@ let handler = async (m, { conn }) => {
 📥➢ .ytmp3 +linkyt
 ➥ Descargas Musica
 
+📥➢ .mediafire
+➥ descargas archivos Mf
+
+📥➢ .pinterest
+➥descargar img de pin
+
 
 ╭──────༺♡༻──────╮
              🤖 *SUB BOTS* 🤖
@@ -298,8 +304,8 @@ let handler = async (m, { conn }) => {
           title: "Haz clic para ver el canal", // El título que aparece
           body: "Canal oficial de WhatsApp",   // Descripción del canal
           mediaType: 1,                       // Tipo de medio, 1 es para un link
-          mediaUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // URL del canal
-          sourceUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // También enlaza al canal
+          mediaUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // URL del canal
+          sourceUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // También enlaza al canal
           thumbnail: await fetchBuffer("https://qu.ax/LXzyv.jpg") // URL de la imagen
         }
       }
