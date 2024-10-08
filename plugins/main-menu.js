@@ -276,6 +276,14 @@ let handler = async (m, { conn }) => {
        👑 *Comandos Owner* 👑
 ╰──────༺♡༻──────╯
 
+👑➢ .banchat/unbanchat
+➥ Banear bot en grupos
+
+👑➢ .banuser/unbanuser
+➥ Banear usuarios
+
+👑➢ .addowner/dsowner
+➥ Dar Owner del bot (próximamente)
 `.trim()
 
     await conn.sendMessage(m.chat, { 
