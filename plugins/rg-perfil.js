@@ -101,9 +101,9 @@ let handler = async (m, { conn, usedPrefix }) => {
     let country = getCountryByPrefix(phoneNumber);
 
     // Definir estado basado en si el usuario está baneado o no
-    let estado = banned ? 'BANEADO [❌]' : 'LIBRE [✅]';
+    let estado = banned ? 'BANEADO [❌]' : 'NOBANEADO [✅]';
 
-    let str = `*[𝘽𝙄𝙇𝙇 - 𝘽𝙊𝙏]*
+    let str = `*[𝑺𝑼𝑷𝑹𝑨 - 𝑩𝑶𝑻]*
     
 *PERFIL DE* @${who.split('@')[0]}
 
