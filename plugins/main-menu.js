@@ -1,4 +1,4 @@
-let handler = async (m, { conn, usedPrefix: _p }) => {
+let handler = async (m, { conn }) => {
   try {
     let name = await conn.getName(m.sender)
     let menuText = `
@@ -7,24 +7,22 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 
 *🔰INFORMACIÓN DEL BOT🔰*
 
-*𝘈𝘊𝘛𝘜𝘈𝘓𝘐𝘡𝘈𝘊𝘐𝘖𝘕  < 1.2.1 >*
-
 ➢ *[👨🏻‍💻] CREADOR:* ALDAIR
 ➢ *[💮] ESTADO:* ACTIVO 🟢
 ➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
 
 `.trim()
 
-    // Simular el reenvío desde un canal
     await conn.sendMessage(m.chat, { 
       text: menuText, 
       contextInfo: { 
         externalAdReply: {
-          title: "Canal de WhatsApp",
-          body: "Haz clic para ver el canal",
-          mediaType: 1,
+          title: "Haz clic para ver el canal", // El título que aparece
+          body: "Canal oficial de WhatsApp",   // Descripción del canal
+          mediaType: 1,                       // Tipo de medio, 1 es para un link
           mediaUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // URL del canal
-          thumbnail: null
+          sourceUrl: "https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42", // También enlaza al canal
+          thumbnail: null                     // Puedes agregar una imagen si deseas
         }
       }
     }, { quoted: m })
