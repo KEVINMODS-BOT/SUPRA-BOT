@@ -1,4 +1,4 @@
-let handlerReporte = async (m, { conn, args, usedPrefix }) => {
+let handler = async (m, { conn, args, usedPrefix }) => {
     // Verificar si el usuario proporcionó un mensaje
     if (!args[0]) return m.reply(`Por favor, proporciona el texto del reporte. Ejemplo: ${usedPrefix}reporte El comando .s no funciona`);
 
@@ -16,32 +16,8 @@ let handlerReporte = async (m, { conn, args, usedPrefix }) => {
     }
 };
 
-let handlerAnonimo = async (m, { conn, args, usedPrefix }) => {
-    // Verificar si el usuario proporcionó un mensaje
-    if (!args[0]) return m.reply(`Por favor, proporciona el mensaje que quieres enviar de manera anónima. Ejemplo: ${usedPrefix}anonimo Este es un mensaje anónimo`);
+handler.help = ['reporte'];
+handler.tags = ['info'];
+handler.command = /^reporte$/i;
 
-    let anonymousMessage = args.join(' '); // Unir todos los argumentos como el mensaje anónimo
-
-    let mensaje = `*MENSAJE ANÓNIMO:*\n\n${anonymousMessage}`;
-
-    try {
-        // Enviar el mensaje de manera anónima
-        await conn.sendMessage('+51925015528@s.whatsapp.net', { text: mensaje });
-        m.reply('Tu mensaje anónimo ha sido enviado correctamente.');
-    } catch (e) {
-        m.reply('Hubo un error al enviar tu mensaje anónimo. Por favor, intenta de nuevo.');
-    }
-};
-
-// Configuración para el comando .reporte
-handlerReporte.help = ['reporte'];
-handlerReporte.tags = ['info'];
-handlerReporte.command = /^reporte$/i;
-
-// Configuración para el comando .anonimo
-handlerAnonimo.help = ['anonimo'];
-handlerAnonimo.tags = ['info'];
-handlerAnonimo.command = /^anonimo$/i;
-
-// Exportar ambos comandos
-export { handlerReporte, handlerAnonimo };
+export default handler;
