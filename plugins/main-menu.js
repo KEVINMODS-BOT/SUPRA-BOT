@@ -306,7 +306,7 @@ let handler = async (m, { conn }) => {
           mediaType: 1,                       // Tipo de medio, 1 es para un link
           mediaUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // URL del canal
           sourceUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // También enlaza al canal
-          thumbnail: await fetchBuffer("https://qu.ax/LXzyv.jpg") // URL de la imagen
+          thumbnail: await fetchBuffer("https://qu.ax/ubjdp.jpg") // URL de la imagen
         }
       }
     }, { quoted: m })
