@@ -59,7 +59,7 @@ let handler = async (m, { conn, usedPrefix }) => {
         return;
     }
 
-    let pp = 'https://qu.ax/KFrad.jpg';
+    let pp = 'https://qu.ax/ubjdp.jpg';
     try {
         pp = await conn.getProfilePicture(who);
     } catch (e) {
