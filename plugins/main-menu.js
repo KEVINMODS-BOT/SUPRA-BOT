@@ -1,57 +1,20 @@
-import { promises } from 'fs'
-import { join } from 'path'
+let handler = async (m, { conn }) => {
 
-let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   try {
-    let _package = JSON.parse(await promises.readFile(join(__dirname, '../package.json')).catch(_ => ({}))) || {}
-    let { exp, limit, level } = global.db.data.users[m.sender]
+
     let name = await conn.getName(m.sender)
-    let d = new Date(new Date() + 3600000)
-    let locale = 'es'
-    let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
-    let week = d.toLocaleDateString(locale, { weekday: 'long' })
-    let date = d.toLocaleDateString(locale, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-    let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(d)
-    let time = d.toLocaleTimeString(locale, {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric'
-    })
-    let _uptime = process.uptime() * 1000
-    let _muptime
-    if (process.send) {
-      process.send('uptime')
-      _muptime = await new Promise(resolve => {
-        process.once('message', resolve)
-        setTimeout(resolve, 1000)
-      }) * 1000
-    }
-    let muptime = clockString(_muptime)
-    let uptime = clockString(_uptime)
-    let totalreg = Object.keys(global.db.data.users).length
-    let rtotalreg = Object.values(global.db.data.users).filter(user => user.registered == true).length
 
-    // Determinar si hay códigos disponibles
-    let availableCodes = global.db.data.codes && Object.keys(global.db.data.codes).length > 0;
-
-    // Texto del nuevo menú
     let menuText = `
+
+
 
 *Bienvenido* @${name} 
 
-*Puede seguir el canal del bot:* https://whatsapp.com/channel/0029VapwUi0Dp2QC3xO9PX42
+
 
 *🔰INFORMACIÓN DEL BOT🔰*
 
-*𝘈𝘊𝘛𝘜𝘈𝘓𝘐𝘡𝘈𝘊𝘐𝘖𝘕  < 1.2.1 >*
+
 
 ➢ *[👨🏻‍💻] CREADOR:* KEVINMODS
 
@@ -631,27 +594,66 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
 `.trim()
 
-    let imageUrl = 'https://qu.ax/vBkPn.jpg' // Reemplaza esto con el enlace directo a tu imagen
-    await conn.sendMessage(m.chat, { image: { url: imageUrl }, caption: menuText }, { quoted: m })
+
+
+    await conn.sendMessage(m.chat, { 
+
+      text: menuText, 
+
+      contextInfo: { 
+
+        externalAdReply: {
+
+          title: "Haz clic para ver el canal", // El título que aparece
+
+          body: "Canal oficial de WhatsApp",   // Descripción del canal
+
+          mediaType: 1,                       // Tipo de medio, 1 es para un link
+
+          mediaUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // URL del canal
+
+          sourceUrl: "https://whatsapp.com/channel/0029VamNtKYBadmVEAlDYH2F", // También enlaza al canal
+
+          thumbnail: await fetchBuffer("https://qu.ax/ubjdp.jpg") // URL de la imagen
+
+        }
+
+      }
+
+    }, { quoted: m })
+
+
 
   } catch (e) {
+
     conn.reply(m.chat, 'Lo sentimos, el menú tiene un error.', m)
+
     throw e
+
   }
+
 }
 
+
+
 handler.help = ['menu']
+
 handler.tags = ['main']
+
 handler.command = ['menu', 'help', 'menú'] 
+
 handler.register = true 
+
 export default handler
 
-const more = String.fromCharCode(8206)
-const readMore = more.repeat(4001)
 
-function clockString(ms) {
-  let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-  let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-  let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-      }
+
+// Función para descargar la imagen y convertirla en buffer
+
+async function fetchBuffer(url) {
+
+  let res = await fetch(url)
+
+  return await res.buffer()
+
+          }
