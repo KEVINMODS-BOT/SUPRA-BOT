@@ -631,7 +631,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
 `.trim()
 
-    let imageUrl = 'https://qu.ax/KFrad.jpg' // Reemplaza esto con el enlace directo a tu imagen
+    let imageUrl = 'https://qu.ax/vBkPn.jpg' // Reemplaza esto con el enlace directo a tu imagen
     await conn.sendMessage(m.chat, { image: { url: imageUrl }, caption: menuText }, { quoted: m })
 
   } catch (e) {
