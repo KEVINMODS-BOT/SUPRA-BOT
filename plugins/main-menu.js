@@ -11,17 +11,12 @@ let handler = async (m, { conn }) => {
 *Bienvenido* @${name} 
 
 
-
 *🔰INFORMACIÓN DEL BOT🔰*
 
 
-
 ➢ *[👨🏻‍💻] CREADOR:* KEVINMODS
-
 ➢ *[💮] ESTADO:* ACTIVO 🟢
-
 ➢ *[🔐] MODO:* ${global.opts['self'] ? 'Privado' : 'Público'}
-
 
 
 ╭──────༺♡༻──────╮
