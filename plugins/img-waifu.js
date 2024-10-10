@@ -11,37 +11,37 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
         }
 
         // Verificar el comando de compra
-        if (command === 'comprarwaifu') {
+        if (command === 'comprarharem') {
             let res = await fetch('https://api.waifu.pics/sfw/waifu');
             if (!res.ok) return;
             let json = await res.json();
             if (!json.url) return;
 
-            let waifuPrice = obtenerPrecioAleatorio(); // Precio aleatorio de 10, 15, o 20 créditos
+            let haremPrice = obtenerPrecioAleatorio(); // Precio aleatorio de 10, 15, o 20 créditos
 
-            if (user.limit < waifuPrice) {
-                conn.reply(m.chat, `No tienes suficientes créditos para comprar esta waifu. Necesitas ${waifuPrice} créditos.`, m);
+            if (user.limit < haremPrice) {
+                conn.reply(m.chat, `No tienes suficientes créditos para comprar este harem. Necesitas ${haremPrice} créditos.`, m);
                 return;
             }
 
-            user.limit -= waifuPrice;
-            user.waifus = user.waifus || [];
-            user.waifus.push(json.url); // Almacenar la URL de la waifu en la base de datos del usuario
+            user.limit -= haremPrice;
+            user.harem = user.harem || [];
+            user.harem.push(json.url); // Almacenar la URL del harem en la base de datos del usuario
 
-            conn.sendFile(m.chat, json.url, 'thumbnail.jpg', `Has comprado una waifu por ${waifuPrice} créditos.\n\n .miswaifus  Para ver tus waifus\n\n .venderwaifu número de la waifu   Para vender tus waifus `, m);
+            conn.sendFile(m.chat, json.url, 'thumbnail.jpg', `Has comprado un harem por ${haremPrice} créditos.\n\n .misharem  Para ver tu harem\n\n .venderharem número del harem   Para vender tu harem`, m);
         }
 
         // Verificar el comando de venta
-        if (command === 'venderwaifu') {
-            let waifuIndex = parseInt(args[0]) - 1;
+        if (command === 'venderharem') {
+            let haremIndex = parseInt(args[0]) - 1;
 
-            if (!user.waifus || user.waifus.length === 0) {
-                conn.reply(m.chat, 'No tienes waifus para vender.', m);
+            if (!user.harem || user.harem.length === 0) {
+                conn.reply(m.chat, 'No tienes harem para vender.', m);
                 return;
             }
 
-            if (waifuIndex < 0 || waifuIndex >= user.waifus.length) {
-                conn.reply(m.chat, 'Elige una waifu válida para vender.', m);
+            if (haremIndex < 0 || haremIndex >= user.harem.length) {
+                conn.reply(m.chat, 'Elige un harem válido para vender.', m);
                 return;
             }
 
@@ -50,22 +50,22 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
 
             if (Math.random() * 100 <= probabilidad) {
                 user.limit += sellPrice;
-                user.waifus.splice(waifuIndex, 1); // Eliminar la waifu de la lista del usuario
-                conn.reply(m.chat, `¡Venta exitosa! Has vendido una waifu por ${sellPrice} créditos.`, m);
+                user.harem.splice(haremIndex, 1); // Eliminar el harem de la lista del usuario
+                conn.reply(m.chat, `¡Venta exitosa! Has vendido un harem por ${sellPrice} créditos.`, m);
             } else {
-                conn.reply(m.chat, `Lo siento, no pudiste vender la waifu esta vez. Inténtalo de nuevo más tarde.`, m);
+                conn.reply(m.chat, `Lo siento, no pudiste vender el harem esta vez. Inténtalo de nuevo más tarde.`, m);
             }
         }
 
-        // Mostrar las waifus que tiene el usuario
-        if (command === 'miswaifus') {
-            if (!user.waifus || user.waifus.length === 0) {
-                conn.reply(m.chat, 'No tienes waifus. Compra una con el comando `.comprarwaifu`.', m);
+        // Mostrar los harem que tiene el usuario
+        if (command === 'misharem') {
+            if (!user.harem || user.harem.length === 0) {
+                conn.reply(m.chat, 'No tienes harem. Compra uno con el comando `.comprarharem`.', m);
                 return;
             }
 
-            let waifuList = user.waifus.map((url, i) => `${i + 1}. ${url}`).join('\n');
-            conn.reply(m.chat, `Estas son tus waifus:\n\n${waifuList}\n\nUsa \`.venderwaifu [número]\` para vender una waifu.`, m);
+            let haremList = user.harem.map((url, i) => `${i + 1}. ${url}`).join('\n');
+            conn.reply(m.chat, `Este es tu harem:\n\n${haremList}\n\nUsa \`.venderharem [número]\` para vender un harem.`, m);
         }
 
     } catch (e) {
@@ -129,9 +129,9 @@ function determinarProbabilidad(precio) {
     }
 }
 
-handler.help = ['comprarwaifu', 'venderwaifu [número]', 'miswaifus'];
+handler.help = ['comprarharem', 'venderharem [número]', 'misharem'];
 handler.tags = ['img', 'econ'];
-handler.command = /^(comprarwaifu|venderwaifu|miswaifus)$/i;
+handler.command = /^(comprarharem|venderharem|misharem)$/i;
 handler.register = true;
 
 export default handler;
