@@ -94,7 +94,7 @@ txt += `│  ✩  *Edad* : ${age} años\n`;
 txt += `│  ✩  *País* : ${countryInfo.name} ${countryInfo.emoji}\n`;
 txt += `│  ✩  *Número de serie*\n`;
 txt += `└  ✩  ${sn}\n\n`;
-txt += `✨ ¡Usted está registrado en mi base de datos! ✨`;
+txt += `✨ ¡Usted está registrado en mi base de datos!✨`;
 
 // Enviar la imagen junto con el texto
 await conn.sendMessage(m.chat, { image: image, caption: txt });
